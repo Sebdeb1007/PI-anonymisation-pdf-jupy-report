@@ -16,6 +16,13 @@ import java.util.regex.Pattern;
  */
 public class AnonJPY {
 
+   /**
+    * It takes a file as input, and returns a file with the same content, but with the name, email, and
+    * phone number fields anonymized
+    * 
+    * @param file the path to the file you want to anonymize
+    * @param output the path to the output directory
+    */
     public static void anonJPY(String file, String output){
         String[] infos = getInfos(file);
         File f = new File(file);
@@ -83,6 +90,14 @@ public class AnonJPY {
     // Declaring a string variable
       
     }
+    /**
+     * This function takes a file and an output directory as input, reads the file, removes the last
+     * three lines, and writes the file to the output directory with the name
+     * "reveal_"+name.substring(10,name.length()-8)+".ipynb"
+     * 
+     * @param file the file to be decrypted
+     * @param output the directory where the output file will be saved
+     */
     public static void revealJPY(String file,String output){
         File f = new File(file);
         try {
@@ -116,8 +131,8 @@ public class AnonJPY {
                 }
                 count++;
             }
-            File myObj = new File(output+"reveal_"+name.substring(10,name.length()-8)+".ipynb");
-            FileWriter writer = new FileWriter(output+"reveal_"+name.substring(10,name.length()-8)+".ipynb");
+            File myObj = new File(output+ f.getName().substring(0,f.getName().length()-6)+"_"+name.substring(10,name.length()-8)+".ipynb");
+            FileWriter writer = new FileWriter(output+f.getName().substring(0,f.getName().length()-6)+"_"+name.substring(10,name.length()-8)+".ipynb");
             writer.write(tot);
             writer.close();
             f.delete();
@@ -129,6 +144,13 @@ public class AnonJPY {
             e.printStackTrace();
         }
     }
+    /**
+     * It reads a file and returns an array of strings containing the values of the lines that start
+     * with "name:", "mail:" and "num:"
+     * 
+     * @param file the file path
+     * @return An array of strings.
+     */
     public static String[]  getInfos(String file){
         String[] infos = new String[3];
         infos[0] = new String();

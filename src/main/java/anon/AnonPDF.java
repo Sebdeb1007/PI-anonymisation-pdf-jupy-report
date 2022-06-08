@@ -1,12 +1,9 @@
-/**
- * It reads a PDF file, parses it, and removes some text from it
- */
+
 
 package anon;
 
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
-import java.util.Random;
 
 import org.apache.pdfbox.contentstream.operator.*;
 import org.apache.pdfbox.pdfwriter.ContentStreamWriter;
@@ -24,11 +20,18 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdfparser.*;
 import org.apache.pdfbox.cos.*;
-import org.apache.pdfbox.io.RandomAccessRead;
+
 
 
 public class AnonPDF {
     
+    /**
+     * It takes a PDF file and an output path as parameters, then it parses the PDF file and removes
+     * the rows that contain the information that we want to hide
+     * 
+     * @param file the path to the PDF file you want to anonymize
+     * @param output the output directory
+     */
     public static void anonPDF(String file, String output) {
         
         String[] infos = getInfos(file);
@@ -159,11 +162,20 @@ public class AnonPDF {
             e.printStackTrace();
         }
     }
+    /**
+     * It takes a PDF file, loads it into a PDDocument, parses the tokens, and replaces the token
+     * operator with the TJ operator
+     * 
+     * @param file the path to the PDF file you want to reveal
+     * @param output the output directory
+     */
     public static void revealPDF(String file, String output) {
         PDDocument doc = null;
         String name = "";
+        String id = "";
         try {
             File pdf = new File(file);
+            id = pdf.getName();
             name = pdf.getName();
             doc = PDDocument.load(pdf);
             for (PDPage page : doc.getPages()) {
@@ -187,7 +199,7 @@ public class AnonPDF {
                     page.setContents(updatedStream);
                     out.close();
                 }
-            doc.save(output+ "reveal_" + name);  
+            doc.save(output+ id.substring(0,id.length()-4)+"_" + name);  
             }
             doc.close();
             pdf.delete();
@@ -196,9 +208,9 @@ public class AnonPDF {
         catch (IOException e) {
             e.printStackTrace();
         }
-        String[] infos  = getInfos(output+ "reveal_" + name);
-        Path fileToBeRename = Paths.get(output+"reveal_" + name);
-        Path rename = Paths.get(output+"reveal_" + infos[0]+".pdf");
+        String[] infos  = getInfos(output+id.substring(0,id.length()-4)+"_" + name);
+        Path fileToBeRename = Paths.get(output+id.substring(0,id.length()-4)+"_" + name);
+        Path rename = Paths.get(output+id.substring(0,id.length()-4)+"_" + infos[0]+".pdf");
         try {
             Files.move(fileToBeRename, rename);
         } catch (IOException e) {
@@ -207,10 +219,18 @@ public class AnonPDF {
 
     }
 
+   /**
+    * It takes a PDF file as an input and returns an array of strings containing the name, mail and
+    * number of the user
+    * 
+    * @param file The path to the PDF file.
+    * @return The method returns an array of strings.
+    */
     private static String[] getInfos(String file) {
         File pdf = new File(file);
         String[] infos = new String[3];
         String text = "";
+        // A regular expression that is used to find the name, mail and number of the user.
         Pattern pattern1 = Pattern.compile("name:", Pattern.CASE_INSENSITIVE);
         Pattern pattern2 = Pattern.compile("mail:", Pattern.CASE_INSENSITIVE);
         Pattern pattern3 = Pattern.compile("num:", Pattern.CASE_INSENSITIVE);

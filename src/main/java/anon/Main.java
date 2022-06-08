@@ -8,15 +8,11 @@ import picocli.CommandLine.Parameters;
 
 
 import java.util.concurrent.Callable;
-import java.util.Set;
-import java.util.HashSet;
 import java.io.File;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
-import anon.AnonPDF;
-import anon.AnonJPY;
+
 
 
 
@@ -40,6 +36,7 @@ class Main implements Callable<Integer> {
     
 
     
+  
     @Override
     public Integer call() throws Exception { 
          try {
@@ -78,6 +75,13 @@ class Main implements Callable<Integer> {
         return 0;
         //
     }
+    /**
+     * This function takes in a file and an output file, and if the file is a pdf or jupyter notebook,
+     * it will anonymize the file and save it to the output file
+     * 
+     * @param file the file you want to anonymize
+     * @param output The output directory for the anonymized files
+     */
     private void anon(String file, String output) {
                 String fe = "";
                 int i = file.lastIndexOf('.');
@@ -94,6 +98,14 @@ class Main implements Callable<Integer> {
                     System.out.println(file + " is not a pdf or jupyter file");
                 }
     }
+   /**
+    * If the file extension is pdf, then call the revealPDF function from the AnonPDF class. If the
+    * file extension is ipynb, then call the revealJPY function from the AnonJPY class. Otherwise,
+    * print an error message
+    * 
+    * @param file the file you want to reveal
+    * @param output The output file name
+    */
     private void reveal(String file, String output) {
         String fe = "";
         int i = file.lastIndexOf('.');
